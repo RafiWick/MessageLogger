@@ -5,7 +5,7 @@ namespace MessageLogger.UnitTests
         [Fact]
         public void Message_Constructor_CreatesMessage()
         {
-            var testMessage = new Message("abcdefg");
+            var testMessage = new Message("abcdefg", null);
             var DT = DateTime.Now;
 
             Assert.Equal("abcdefg", testMessage.Content);

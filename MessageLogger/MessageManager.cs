@@ -9,9 +9,9 @@ namespace MessageLogger
 {
     public class MessageManager
     {
-        List<User> Users;
-        User ActiveUser;
-        bool LoggedIn;
+        public List<User> Users;
+        public User ActiveUser;
+        public bool LoggedIn;
         public MessageManager()
         {
             Users = new List<User>();
@@ -138,20 +138,32 @@ namespace MessageLogger
         }
         public List<Message> SortByCreatedAt(List<Message> list)
         {
-            return list.OrderBy(x => x.CreatedAt).ToList();
+            var returnList = new List<Message>();
+            while (list.Count > 0)
+            {
+                Message next = list[0];
+                foreach (Message message in list)
+                {
+                    var test = DateTime.Compare(message.CreatedAt, next.CreatedAt);
+                    if (DateTime.Compare(message.CreatedAt, next.CreatedAt) < 0) next = message;
+                }
+                returnList.Add(next);
+                list.Remove(next);
+            }
+
+
+            return returnList;
         }
         public List<Message> RecentMessages(int num)
         {
+            var list = AllMessages();
             var returnList = new List<Message>();
-            foreach (User user in Users)
+            int count = list.Count - 1;
+            for (int i = count; i > count - num; i--)
             {
-                for (int i = 0; i < num; i++)
-                {
-                    if (i + 1 > user.Messages.Count) break;
-
-                    returnList.Add(user.Messages[i]);
-                }
+                returnList.Add(list[i]);
             }
+
             return returnList;
         }
         public void ShowMessages()
