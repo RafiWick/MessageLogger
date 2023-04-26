@@ -19,7 +19,7 @@ namespace MessageLogger.UnitTests
             Assert.Equal(new List<Message>(), testUser.Messages);
         }
         [Fact]
-        public void User_CreateMessage_CreaatesMessageInMessages()
+        public void User_CreateMessage_CreatesMessageInMessages()
         {
             var testUser = new User("John", "johndoe");
             testUser.CreateMessage("abcdefg");

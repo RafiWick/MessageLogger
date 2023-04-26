@@ -106,5 +106,27 @@ namespace MessageLogger.UnitTests
             testList.Add(message2);
             Assert.Equal(testList, testManager.RecentMessages(3));
         }
+        [Fact]
+        public void MessageManager_SearchMessages_ReturnsAllMessagesContainingKeyWord()
+        {
+            var testManager = new MessageManager();
+            testManager.Users.Add(new User("testname1", "username"));
+            var message1 = new Message("test keyword djdj", testManager.FindUser("username"));
+            message1.CreatedAt = new DateTime(2023, 4, 25, 10, 0, 0);
+            var message2 = new Message("test2 nsnns", testManager.FindUser("username"));
+            message2.CreatedAt = new DateTime(2023, 4, 25, 11, 0, 0);
+            var message3 = new Message("test3 keyword sakj", testManager.FindUser("username"));
+            message3.CreatedAt = new DateTime(2023, 4, 25, 12, 0, 0);
+            var message4 = new Message("test4", testManager.FindUser("username"));
+            message4.CreatedAt = new DateTime(2023, 4, 25, 13, 0, 0);
+            testManager.FindUser("username").Messages.Add(message1);
+            testManager.FindUser("username").Messages.Add(message2);
+            testManager.FindUser("username").Messages.Add(message3);
+            testManager.FindUser("username").Messages.Add(message4);
+            var testList = new List<Message>();
+            testList.Add(message1);
+            testList.Add(message3);
+            Assert.Equal(testList, testManager.SearchMessages("keyword"));
+        }
     }
 }

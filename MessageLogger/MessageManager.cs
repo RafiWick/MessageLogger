@@ -16,6 +16,8 @@ namespace MessageLogger
         {
             Users = new List<User>();
         }
+
+        // Main program
         public void RunApp()
         {
             bool run = true;
@@ -40,14 +42,18 @@ namespace MessageLogger
             Summerize();
         }
         
+
+        // sets ActiveUser
         public void LogIn()
         {
             bool newUser = IsNewUser();
             if (newUser) CreateUser();
             else SetUser();
+            Console.WriteLine();
             Console.WriteLine("To log out of your user profile, enter 'log out'. to quit the application enter 'quit'");
         }
 
+        // creates a new user and sets it to active user
         public void CreateUser()
         {
             Console.WriteLine("Let's create a user profile for you.");
@@ -59,6 +65,8 @@ namespace MessageLogger
             ActiveUser = FindUser(username);
             LoggedIn = true;
         }
+
+        // takes username from user input and finds the user object with that username and sets it to active user
         public void SetUser()
         {
             Console.Write("What is your username? ");
@@ -69,6 +77,8 @@ namespace MessageLogger
                 LoggedIn = true;
             }
         }
+
+        // Deturmines if a new user needs to becreated
         public bool IsNewUser()
         {
             bool newUser = true;
@@ -83,6 +93,7 @@ namespace MessageLogger
             return newUser;
         }
 
+        // takes the username andreturns the user with that username
         public User FindUser(string username)
         {
             User returnUser = null;
@@ -96,26 +107,22 @@ namespace MessageLogger
             return returnUser;
         }
 
+
+        // propmts user to add message and returns the string they typed
         public string GetMessage()
         {
             Console.Write("Add a message: ");
             return (Console.ReadLine());
         }
+
+        // takes the string and creates a message in the active user
         public void CreateMessage(string message)
         {
             ActiveUser.CreateMessage(message);
             PrintMessages(ActiveUser.Messages);
         }
 
-        public void Summerize()
-        {
-            Console.WriteLine("Thanks for using Message Logger!");
-            foreach (User user in Users)
-            {
-                Console.WriteLine($"{user.Name} wrote {user.Messages.Count()} messages.");
-            }
-            ShowMessages();
-        }
+        // prints each message in the list given to it with the author and the time of creation
         public void PrintMessages(List<Message> messages)
         {
             foreach (Message message in messages)
@@ -123,6 +130,52 @@ namespace MessageLogger
                 Console.WriteLine($"{message.Author.Name} {message.CreatedAt.ToShortTimeString()}: {message.Content}");
             }
         }
+
+
+        // gives a summary of the messages posted and calls for the ShowMessages method
+        public void Summerize()
+        {
+            Console.WriteLine("Thanks for using Message Logger!");
+            Console.WriteLine();
+
+            foreach (User user in Users)
+            {
+                Console.WriteLine($"{user.Name} wrote {user.Messages.Count()} messages.");
+            }
+            Console.WriteLine();
+            ShowMessages();
+        }
+
+        // prompts the user to say how many messages they'd like to see and calls the appropriate method to do that
+        public void ShowMessages()
+        {
+            Console.WriteLine("How many messages would you like to see");
+            Console.WriteLine("enter a number to get that many of the most recent messages");
+            Console.WriteLine("enter 'search' to search messages for a keyword");
+            Console.WriteLine("enter anything else to see all messages");
+            string input = Console.ReadLine();
+            Console.WriteLine();
+            int num = 0;
+            bool isNum = int.TryParse(input, out num);
+            if (isNum)
+            {
+                PrintMessages(RecentMessages(num));
+            }
+            else if (input.ToLower().Trim() == "search")
+            {
+                Console.WriteLine("enter the keyword you'd like to search for");
+                string keyword = Console.ReadLine();
+                PrintMessages(SearchMessages(keyword));
+            }
+            else
+            {
+                PrintMessages(AllMessages());
+            }
+
+        }
+
+        // gets the full list of all messages and runs it through the sort method
+        // to return the messages sorted by when they were created
         public List<Message> AllMessages()
         {
             var list = new List<Message>();
@@ -136,6 +189,8 @@ namespace MessageLogger
             var returnList = SortByCreatedAt(list);
             return returnList;
         }
+
+        // takes a list of messages and sorts them by the time they were created
         public List<Message> SortByCreatedAt(List<Message> list)
         {
             var returnList = new List<Message>();
@@ -154,6 +209,8 @@ namespace MessageLogger
 
             return returnList;
         }
+
+        // returns the last num messages, is only called if num is less than the total number of messages
         public List<Message> RecentMessages(int num)
         {
             var list = AllMessages();
@@ -166,22 +223,21 @@ namespace MessageLogger
 
             return returnList;
         }
-        public void ShowMessages()
+
+        // returns a list of all messages that contain the keyword or string given to it
+        public List<Message> SearchMessages(string keyword)
         {
-            Console.WriteLine("How many messages would you like to see");
-            Console.WriteLine("enter a number or anything else to see all messages");
-            string input = Console.ReadLine();
-            int num = 0;
-            bool isNum = int.TryParse(input, out num);
-            if (isNum)
+            var returnList = new List<Message>();
+            var fullList = AllMessages();
+            foreach (Message message in fullList)
             {
-                PrintMessages(RecentMessages(num));
-            }
-            else
-            {
-                PrintMessages(AllMessages());
+                if (message.Content.Contains(keyword))
+                {
+                    returnList.Add(message);
+                }
             }
 
+            return returnList;
         }
     }
 }
