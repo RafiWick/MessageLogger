@@ -30,5 +30,13 @@ namespace MessageLogger.UnitTests
             Assert.Equal(new DateTime(DT.Year, DT.Month, DT.Day, DT.Hour, DT.Minute, DT.Second), testUser.Messages[0].CreatedAt);
             Assert.Single(testUser.Messages);
         }
+        [Fact]
+        public void User_DeleteMessage_RemovesMessageFromMessages()
+        {
+            var testUser = new User("John", "johndoe");
+            testUser.CreateMessage("abcdefg");
+            testUser.DeleteMessage(0);
+            Assert.Empty(testUser.Messages);
+        }
     }
 }
